@@ -1,4 +1,4 @@
-FROM phusion/baseimage:noble-1.0.2
+FROM phusion/baseimage:noble-1.0.3
 
 CMD ["/sbin/my_init"]
 
