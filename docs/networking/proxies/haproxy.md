@@ -113,6 +113,16 @@ dokku haproxy:set --global log-level DEBUG
 
 After modifying,  the Haproxy container will need to be restarted.
 
+### Changing the Haproxy refresh interval
+
+Haproxy polls the Docker API for label changes every `10` seconds by default. The interval may be changed by setting the `refresh-conf` property with the `--global` flag:
+
+```shell
+dokku haproxy:set --global refresh-conf 5
+```
+
+The `refresh-conf` property is global-only and cannot be set on a per-app basis. Setting an empty value will reset it to the default. After modifying, the Haproxy container will need to be restarted.
+
 ### Label Management
 
 The Haproxy plugin allows you to add custom container labels to apps. These labels are injected into containers during deployment and can be used to configure Haproxy behavior beyond what the plugin provides by default.

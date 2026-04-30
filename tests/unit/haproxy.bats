@@ -7,6 +7,7 @@ setup() {
   dokku nginx:stop
   dokku haproxy:set --global letsencrypt-server https://acme-staging-v02.api.letsencrypt.org/directory
   dokku haproxy:set --global letsencrypt-email
+  dokku haproxy:set --global refresh-conf 2
   dokku haproxy:start
   create_app
 }
@@ -15,6 +16,7 @@ teardown() {
   global_teardown
   destroy_app
   dokku haproxy:stop
+  dokku haproxy:set --global refresh-conf
   dokku nginx:start
 }
 
@@ -30,6 +32,42 @@ teardown() {
   echo "status: $status"
   assert_output_contains "Manage the haproxy proxy integration"
   assert_output "$help_output"
+}
+
+@test "(haproxy) refresh-conf" {
+  run /bin/bash -c "dokku haproxy:set $TEST_APP refresh-conf 2"
+  echo "output: $output"
+  echo "status: $status"
+  assert_failure
+  assert_output_contains "can only be set globally"
+
+  run /bin/bash -c "dokku haproxy:set --global refresh-conf 5"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku haproxy:report --global --haproxy-refresh-conf"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "5"
+
+  run /bin/bash -c "dokku haproxy:show-config"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output_contains "EASYHAPROXY_REFRESH_CONF=5"
+
+  run /bin/bash -c "dokku haproxy:set --global refresh-conf"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku haproxy:report --global --haproxy-refresh-conf"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "10"
 }
 
 @test "(haproxy) log-level" {
@@ -60,11 +98,7 @@ teardown() {
   echo "status: $status"
   assert_success
 
-  run /bin/bash -c "curl --silent $(dokku url $TEST_APP)"
-  echo "output: $output"
-  echo "status: $status"
-  assert_success
-  assert_output_contains "python/http.server"
+  assert_http_localhost_response_contains "http" "$TEST_APP.$DOKKU_DOMAIN" "80" "/" "python/http.server"
 }
 
 @test "(haproxy) multiple domains" {
@@ -87,8 +121,6 @@ teardown() {
   echo "output: $output"
   echo "status: $status"
   assert_success
-
-  sleep 5
 
   run /bin/bash -c "dokku logs $TEST_APP"
   echo "output: $output"

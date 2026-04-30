@@ -72,6 +72,7 @@ cmd-haproxy-report-single() {
     "--haproxy-letsencrypt-email: $(fn-haproxy-letsencrypt-email)"
     "--haproxy-letsencrypt-server: $(fn-haproxy-letsencrypt-server)"
     "--haproxy-log-level: $(fn-haproxy-log-level)"
+    "--haproxy-refresh-conf: $(fn-haproxy-refresh-conf)"
   )
 
   fn-report-validate-format "$FORMAT" "$INFO_FLAG"

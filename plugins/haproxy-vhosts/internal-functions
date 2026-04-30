@@ -38,7 +38,8 @@ fn-haproxy-template-compose-file() {
   local SIGIL_PARAMS=(HAPROXY_IMAGE="$(fn-haproxy-image)"
   HAPROXY_LOG_LEVEL="$(fn-haproxy-log-level)"
   HAPROXY_LETSENCRYPT_EMAIL="$(fn-haproxy-letsencrypt-email)"
-  HAPROXY_LETSENCRYPT_SERVER="$(fn-haproxy-letsencrypt-server)")
+  HAPROXY_LETSENCRYPT_SERVER="$(fn-haproxy-letsencrypt-server)"
+  HAPROXY_REFRESH_CONF="$(fn-haproxy-refresh-conf)")
 
   sigil -f "$COMPOSE_TEMPLATE" "${SIGIL_PARAMS[@]}" | cat -s >"$OUTPUT_PATH"
 }
@@ -59,4 +60,8 @@ fn-haproxy-letsencrypt-email() {
 
 fn-haproxy-letsencrypt-server() {
   fn-plugin-property-get-default "haproxy" "--global" "letsencrypt-server" "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+fn-haproxy-refresh-conf() {
+  fn-plugin-property-get-default "haproxy" "--global" "refresh-conf" "10"
 }
