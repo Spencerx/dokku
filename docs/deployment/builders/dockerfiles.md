@@ -185,7 +185,7 @@ You would adjust the cache directory for whatever application cache you have, e.
 
 ### Customizing the run command
 
-By default no arguments are passed to `docker run` when deploying the container and the `CMD` or `ENTRYPOINT` defined in the `Dockerfile` are executed. You can take advantage of docker ability of overriding the `CMD` or passing parameters to your `ENTRYPOINT` setting `$DOKKU_DOCKERFILE_START_CMD`. Let's say for example you are deploying a base Node.js image, with the following `ENTRYPOINT`:
+By default no arguments are passed to `docker run` when deploying the container and the `CMD` or `ENTRYPOINT` defined in the `Dockerfile` are executed. You can take advantage of docker's ability to override the `CMD` or pass parameters to your `ENTRYPOINT` by setting the `dockerfile-start-cmd` property on the `ps` plugin. Let's say for example you are deploying a base Node.js image, with the following `ENTRYPOINT`:
 
 ```Dockerfile
 ENTRYPOINT ["node"]
@@ -194,10 +194,14 @@ ENTRYPOINT ["node"]
 You can do:
 
 ```shell
-dokku config:set node-js-app DOKKU_DOCKERFILE_START_CMD="--harmony server.js"
+dokku ps:set node-js-app dockerfile-start-cmd "--harmony server.js"
 ```
 
-To tell Docker what to run.
+To tell Docker what to run. Pass an empty value to clear the override:
+
+```shell
+dokku ps:set node-js-app dockerfile-start-cmd
+```
 
 ### Procfiles and multiple processes
 

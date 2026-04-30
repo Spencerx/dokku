@@ -127,34 +127,5 @@ The following config variables have special meanings and can be set in a variety
 | `DOKKU_QUIET_OUTPUT`           | none                            | `--quiet` flag                                                                                                                                   | Silences certain header output for `dokku` commands. |
 | `DOKKU_RM_CONTAINER`           | none                            | `dokku config:set` <br />                                                                                                                        | Deprecated: Whether to keep `dokku run` containers around or not. |
 | `DOKKU_TRACE`                  | none                            | `dokku trace:on`   <br /> `dokku trace:off` <br /> `--trace` flag                                                                                | Turn on very verbose debugging. |
-| `DOKKU_SKIP_CLEANUP`           |                                 | `/etc/environment` <br /> `~dokku/.dokkurc` <br /> `~dokku/.dokkurc/*`                                                                           | When a deploy is triggered, if this is set to a non-empty value, then old docker containers and images will not be removed. Falls back to the `builder:set skip-cleanup` property. |
 | `DOKKU_SYSTEM_GROUP`           | `dokku`                         | `/etc/environment` <br /> `~dokku/.dokkurc` <br /> `~dokku/.dokkurc/*`                                                                           | System group to chown files as. |
 | `DOKKU_SYSTEM_USER`            | `dokku`                         | `/etc/environment` <br /> `~dokku/.dokkurc` <br /> `~dokku/.dokkurc/*`                                                                           | System user to chown files as. |
-
-## Deprecated Environment Variables
-
-The following environment variables have been migrated to plugin properties. Existing values will be automatically migrated on upgrade. Use the corresponding property commands going forward.
-
-| Deprecated Env Var | Replacement Command |
-|---|---|
-| `DOKKU_APP_PROXY_TYPE` | `dokku proxy:set <app> type <value>` |
-| `DOKKU_APP_RESTORE` | `dokku ps:set <app> restore <true\|false>` |
-| `DOKKU_APP_SHELL` | `dokku scheduler:set <app> shell <value>` |
-| `DOKKU_CHECKS_DISABLED` | `dokku checks:disable <app> [proctypes]` |
-| `DOKKU_CHECKS_ENABLED` | `dokku checks:enable <app> [proctypes]` |
-| `DOKKU_CHECKS_SKIPPED` | `dokku checks:skip <app> [proctypes]` |
-| `DOKKU_CHECKS_WAIT` | `dokku checks:set <app> wait <value>` |
-| `DOKKU_CHECKS_TIMEOUT` | `dokku checks:set <app> timeout <value>` |
-| `DOKKU_CHECKS_ATTEMPTS` | `dokku checks:set <app> attempts <value>` |
-| `DOKKU_DEFAULT_CHECKS_WAIT` | `dokku checks:set --global default-wait <value>` |
-| `DOKKU_DISABLE_APP_AUTOCREATION` | `dokku apps:set --global disable-autocreation <true\|false>` |
-| `DOKKU_DISABLE_PROXY` | `dokku proxy:disable <app>` / `dokku proxy:enable <app>` |
-| `DOKKU_DOCKERFILE_START_CMD` | `dokku ps:set <app> dockerfile-start-cmd <value>` |
-| `DOKKU_PARALLEL_ARGUMENTS` | Removed. No longer supported. |
-| `DOKKU_PROXY_PORT` | `dokku proxy:set <app> proxy-port <value>` |
-| `DOKKU_PROXY_SSL_PORT` | `dokku proxy:set <app> proxy-ssl-port <value>` |
-| `DOKKU_SKIP_ALL_CHECKS` | `dokku checks:disable <app>` |
-| `DOKKU_SKIP_CLEANUP` | `dokku builder:set <app> skip-cleanup <true\|false>` |
-| `DOKKU_SKIP_DEFAULT_CHECKS` | `dokku checks:skip <app>` |
-| `DOKKU_SKIP_DEPLOY` | `dokku ps:set <app> skip-deploy <true\|false>` |
-| `DOKKU_START_CMD` | `dokku ps:set <app> start-cmd <value>` |

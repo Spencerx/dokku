@@ -315,6 +315,28 @@ Finally, the number of parallel workers may be automatically set to the number o
 dokku ps:start --all --parallel -1
 ```
 
+### Customizing the start command
+
+The command used to start an app's containers can be customized via two `ps` properties, depending on which builder is in use.
+
+For buildpack-built apps (where the start command normally comes from the `Procfile`), set `start-cmd`:
+
+```shell
+dokku ps:set node-js-app start-cmd "node server.js"
+```
+
+For Dockerfile-built apps, set `dockerfile-start-cmd`. This value is passed as arguments to `docker run` and overrides or supplements the image's `CMD` / `ENTRYPOINT`. See the [Dockerfile builder documentation](/docs/deployment/builders/dockerfiles.md#customizing-the-run-command) for context.
+
+```shell
+dokku ps:set node-js-app dockerfile-start-cmd "--harmony server.js"
+```
+
+Either property can be cleared by passing an empty value:
+
+```shell
+dokku ps:set node-js-app start-cmd
+```
+
 ### Restart policies
 
 > [!IMPORTANT]
@@ -429,3 +451,15 @@ When a server reboots or Docker is restarted/upgraded, Docker may or may not sta
     - If any of the app containers are missing, the entire app will be rebuilt.
 
 During this time, requests may route to the incorrect app if the assigned IPs correspond to those for other apps. While dokku makes all efforts to avoid this, there may be a few minutes where urls may route to the wrong app. To avoid this, either use a custom proxy plugin or wait a few minutes until the restoration process is complete.
+
+Per-app restore behavior can be controlled via the `restore` property. When set to `false`, `ps:restore` will skip the app on reboot:
+
+```shell
+dokku ps:set node-js-app restore false
+```
+
+The default value (`true`) may be restored by passing an empty value:
+
+```shell
+dokku ps:set node-js-app restore
+```

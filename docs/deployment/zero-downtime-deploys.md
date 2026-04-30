@@ -67,10 +67,6 @@ dokku checks:skip node-js-app worker,web
 
 ```
 -----> Skipping zero downtime for app's (node-js-app) proctypes (worker,web)
------> Unsetting node-js-app
------> Unsetting DOKKU_CHECKS_DISABLED
------> Setting config vars
-       DOKKU_CHECKS_SKIPPED: worker,web
 ```
 
 Zero downtime checks can also be disabled completely. This will stop old containers *before* new ones start, which may result in broken connections and downtime if your application fails to boot properly.
@@ -81,10 +77,6 @@ dokku checks:disable node-js-app worker
 
 ```
 -----> Disabling zero downtime for app's (node-js-app) proctypes (worker)
------> Setting config vars
-       DOKKU_CHECKS_DISABLED: worker
------> Setting config vars
-       DOKKU_CHECKS_SKIPPED: web
 ```
 
 ### Displaying checks reports for an app

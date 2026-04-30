@@ -9,7 +9,7 @@ proxy:clear-config [--all|<app>] # Clears config for given app
 proxy:disable [--parallel count] [--all|<app>]      # Disable proxy for app
 proxy:enable [--parallel count] [--all|<app>]       # Enable proxy for app
 proxy:report [<app>] [<flag>]                       # Displays a proxy report for one or more apps
-proxy:set [<app>|--global] <proxy-type>                        # Set proxy type for app
+proxy:set [<app>|--global] <key> (<value>)          # Set or clear a proxy property for an app
 ```
 
 In Dokku 0.5.0, port proxying was decoupled from the `nginx-vhosts` plugin into the proxy plugin. Dokku 0.6.0 introduced the ability to map host ports to specific container ports. This allows other proxy software - such as HAProxy or Caddy - to be used in place of nginx.
@@ -25,8 +25,7 @@ dokku proxy:set node-js-app caddy
 ```
 
 ```
------> Setting config vars
-       DOKKU_APP_PROXY_TYPE:  caddy
+=====> Setting type to caddy
 ```
 
 The proxy may also be set on a global basis. This is usually preferred as running multiple proxy implementations may cause port collision issues.
@@ -36,11 +35,54 @@ dokku proxy:set --global caddy
 ```
 
 ```
------> Setting config vars
-       DOKKU_PROXY_TYPE:  caddy
+=====> Setting type to caddy
 ```
 
 Changing the proxy does not stop or start any given proxy implementation. Please see the documentation for your proxy implementation for details on how to perform a change.
+
+### Disabling and enabling the proxy
+
+The proxy can be disabled on a per-app basis via the `proxy:disable` command. While disabled, no proxy configuration will be generated for the app and incoming requests will not be routed through the configured proxy.
+
+```shell
+dokku proxy:disable node-js-app
+```
+
+```
+-----> Disabling proxy for app
+```
+
+The proxy can be re-enabled with the `proxy:enable` command:
+
+```shell
+dokku proxy:enable node-js-app
+```
+
+```
+-----> Enabling proxy for app
+```
+
+### Setting proxy ports
+
+When an app's domains are disabled (see [domains documentation](/docs/configuration/domains.md)), Dokku still exposes the app on a high port so that internal services can reach it at a stable port across deploys. The non-SSL and SSL ports used for this can be configured via the `proxy:set` command:
+
+```shell
+dokku proxy:set node-js-app proxy-port 5000
+dokku proxy:set node-js-app proxy-ssl-port 5443
+```
+
+Either property may also be set globally. Per-app values take precedence over the global value.
+
+```shell
+dokku proxy:set --global proxy-port 5000
+dokku proxy:set --global proxy-ssl-port 5443
+```
+
+The default value for either property may be restored by passing an empty value:
+
+```shell
+dokku proxy:set node-js-app proxy-port
+```
 
 ### Regenerating proxy config
 

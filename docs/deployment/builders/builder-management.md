@@ -82,6 +82,28 @@ The default value may be set by passing an empty value for the option.
 dokku builder:set --global build-dir
 ```
 
+#### Skipping container and image cleanup
+
+After a successful deploy, Dokku removes old containers and images that are no longer referenced by the app. On hosts where image rebuilds are expensive or where operators want to retain prior images for manual rollback, this cleanup can be disabled per-app or globally via the `skip-cleanup` property:
+
+```shell
+dokku builder:set node-js-app skip-cleanup true
+```
+
+The property can also be set globally:
+
+```shell
+dokku builder:set --global skip-cleanup true
+```
+
+The default behavior (cleanup enabled) may be restored by passing an empty value:
+
+```shell
+dokku builder:set node-js-app skip-cleanup
+```
+
+For backwards compatibility with bootstrap-time configuration, the `DOKKU_SKIP_CLEANUP` environment variable in `/etc/environment` or `~dokku/.dokkurc/*` is still honored when the `skip-cleanup` property is unset. The property is the canonical interface and takes precedence when set.
+
 ### Displaying builder reports for an app
 
 You can get a report about the app's builder status using the `builder:report` command:
