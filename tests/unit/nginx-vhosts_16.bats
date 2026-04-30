@@ -65,7 +65,7 @@ teardown() {
   echo "output: $output"
   echo "status: $status"
   assert_success
-  assert_output_contains "ssl_certificate"
-  assert_output_contains "return 301 https"
+  assert_output_contains "ssl_certificate" -1
+  assert_output_contains "return 301 https" -1
   teardown_local_tls
 }
