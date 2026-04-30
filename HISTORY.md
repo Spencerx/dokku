@@ -1,5 +1,70 @@
 # History
 
+## 0.38.0
+
+Install/update via the bootstrap script:
+
+```shell
+wget -NP . https://dokku.com/install/v0.38.0/bootstrap.sh
+sudo DOKKU_TAG=v0.38.0 bash bootstrap.sh
+```
+
+See the [0.38.0 migration guide](/docs/appendices/0.38.0-migration-guide.md) for more information on migrating to 0.38.0.
+
+### Bug Fixes
+
+- #8533: @josegonzalez Split env config and image pull secret into separate helm releases
+- #8530: @josegonzalez Split multi-flag input in docker-options
+- #8528: @josegonzalez Skip retiring images still in use by app containers
+- #8525: @josegonzalez Add launcher entrypoint for CNB images on dokku run and cron:run
+- #8522: @josegonzalez Only emit keda fallback when a non-cpu/memory trigger exists
+- #8515: @josegonzalez Fix vector mount directory config
+- #8508: @josegonzalez Preserve all domains when renaming an app
+- #8507: @josegonzalez Retire orphaned containers when scaling down
+
+### New Features
+
+- #8538: @josegonzalez Add scheduler-aware named storage entries
+- #8527: @josegonzalez Accept --global on :report subcommands
+- #8524: @josegonzalez Pre-validate custom nginx.conf.sigil during core-post-extract
+- #8523: @josegonzalez Support resource limits on the build container
+- #8517: @josegonzalez Send SIGTERM to old containers immediately on deploy
+- #8516: @josegonzalez Scope docker-options to specific procfile processes
+- #8509: @josegonzalez Ship default catch-all site on fresh apt install
+- #8506: @josegonzalez Add --format json to git:report and nginx:report
+- #8505: @josegonzalez Add git:auth-status to check netrc match
+- #8493: @josegonzalez Generate 502 config for apps without web listeners
+- #8404: @josegonzalez Upgrade vector chart from 0.42.0 to 0.52.0
+- #8403: @josegonzalez Upgrade ingress-nginx chart from 4.10.0 to 4.15.1
+- #8402: @josegonzalez Upgrade keda to 2.19.0 and keda-add-ons-http to 0.12.2
+- #8259: @josegonzalez Add post-create support for env key in app.json
+- #8157: @josegonzalez Add support for specifying buildpacks via app.json
+- #8154: @josegonzalez Enable live-restore by default when installing Dokku
+- #3697: @josegonzalez Migrate builds plugin to go and track per-build records
+
+### Refactors
+
+- #8514: @josegonzalez Migrate docker-options subcommands to go
+- #6716: @josegonzalez Move app and global ENV files to consolidated config path
+
+### Dependencies
+
+- #8541: @dependabot[bot] chore(deps): bump traefik from v3.6.14 to v3.6.15 in /plugins/traefik-vhosts
+- #8537: @dependabot[bot] chore(deps): bump github.com/traefik/traefik/v2 from 2.11.43 to 2.11.44 in /plugins/scheduler-k3s
+- #8535: @dependabot[bot] chore(deps): bump github.com/onsi/gomega from 1.39.1 to 1.40.0 in /plugins/common
+- #8529: @josegonzalez chore: bump dokku/netrc to v0.11.0
+- #8520: @dependabot[bot] chore(deps): bump packaging from 26.1 to 26.2 in /docs/_build
+- #8510: @dependabot[bot] chore(deps): bump packaging from 26.1 to 26.2 in /docs/_build
+- #8503: @josegonzalez Bump dependency versions and add daily updater workflow
+- #8502: @josegonzalez Bump go version to 1.26.2
+- #8495: @dependabot[bot] chore(deps): bump k8s.io/apimachinery from 0.35.4 to 0.36.0 in /plugins/scheduler-k3s
+- #8494: @dependabot[bot] chore(deps): bump dokku/openresty-docker-proxy from 0.9.3 to 0.10.0 in /plugins/openresty-vhosts
+- #8490: @dependabot[bot] chore(deps): bump k8s.io/kubernetes from 1.35.4 to 1.36.0 in /plugins/scheduler-k3s
+
+### Other
+
+- #8498: @josegonzalez Migrate environment variables to plugin properties
+
 ## 0.37.10
 
 Install/update via the bootstrap script:
