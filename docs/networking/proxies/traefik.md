@@ -74,7 +74,7 @@ Example `app.json` configuration:
 To use the Traefik plugin, use the `proxy:set` command for the app in question:
 
 ```shell
-dokku proxy:set node-js-app traefik
+dokku proxy:set node-js-app type traefik
 ```
 
 This will enable the docker label-based Traefik integration. All future deploys will inject the correct labels for Traefik to read and route requests to containers. Due to the docker label-based integration used by Traefik, a single deploy or rebuild will be required before requests will route successfully.

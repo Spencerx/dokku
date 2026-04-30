@@ -40,7 +40,7 @@ To change the proxy implementation in use for an application, use the `proxy:set
 ```shell
 # no validation will be performed against
 # the specified proxy implementation
-dokku proxy:set node-js-app nginx
+dokku proxy:set node-js-app type nginx
 ```
 
 ### Listing port mappings

@@ -35,7 +35,7 @@ The Haproxy plugin has specific rules for routing requests:
 To use the Haproxy plugin, use the `proxy:set` command for the app in question:
 
 ```shell
-dokku proxy:set node-js-app haproxy
+dokku proxy:set node-js-app type haproxy
 ```
 
 This will enable the docker label-based Haproxy integration. All future deploys will inject the correct labels for Haproxy to read and route requests to containers. Due to the docker label-based integration used by Haproxy, a single deploy or rebuild will be required before requests will route successfully.

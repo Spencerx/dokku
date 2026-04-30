@@ -39,7 +39,7 @@ The Caddy plugin has specific rules for routing requests:
 To use the Caddy plugin, use the `proxy:set` command for the app in question:
 
 ```shell
-dokku proxy:set node-js-app caddy
+dokku proxy:set node-js-app type caddy
 ```
 
 This will enable the docker label-based Caddy integration. All future deploys will inject the correct labels for Caddy to read and route requests to containers. Due to the docker label-based integration used by Caddy, a single deploy or rebuild will be required before requests will route successfully.
