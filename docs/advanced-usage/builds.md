@@ -1,7 +1,7 @@
 # Build Tracking
 
 > [!IMPORTANT]
-> New as of 0.34.0
+> New as of 0.38.0
 
 Every deploy that flows through Dokku - whether triggered by `git push`, `ps:rebuild`, `ps:restart`, `config:set`, or `git:from-archive` / `git:from-image` / `git:sync` / `git:load-image` - is recorded as a structured build record on disk. The `builds` plugin lets operators inspect what is currently deploying, look up the result of an old deploy, and stream the captured build log without depending on `journalctl`.
 
