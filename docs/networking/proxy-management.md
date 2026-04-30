@@ -21,7 +21,7 @@ In Dokku 0.5.0, port proxying was decoupled from the `nginx-vhosts` plugin into 
 The default proxy shipped with Dokku is `nginx`. It can be changed via the `proxy:set` command.
 
 ```shell
-dokku proxy:set node-js-app caddy
+dokku proxy:set node-js-app type caddy
 ```
 
 ```
@@ -31,7 +31,7 @@ dokku proxy:set node-js-app caddy
 The proxy may also be set on a global basis. This is usually preferred as running multiple proxy implementations may cause port collision issues.
 
 ```shell
-dokku proxy:set --global caddy
+dokku proxy:set --global type caddy
 ```
 
 ```

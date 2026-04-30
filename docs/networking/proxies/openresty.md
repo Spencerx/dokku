@@ -35,7 +35,7 @@ The OpenResty plugin has specific rules for routing requests:
 To use the OpenResty plugin, use the `proxy:set` command for the app in question:
 
 ```shell
-dokku proxy:set node-js-app openresty
+dokku proxy:set node-js-app type openresty
 ```
 
 This will enable the docker label-based OpenResty integration. All future deploys will inject the correct labels for OpenResty to read and route requests to containers. Due to the docker label-based integration used by OpenResty, a single deploy or rebuild will be required before requests will route successfully.
