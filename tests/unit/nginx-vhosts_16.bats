@@ -69,4 +69,3 @@ teardown() {
   assert_output_contains "return 301 https"
   teardown_local_tls
 }
-
