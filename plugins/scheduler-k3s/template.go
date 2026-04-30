@@ -50,14 +50,12 @@ type GlobalValues struct {
 	Keda            GlobalKedaValues   `yaml:"keda"`
 	Namespace       string             `yaml:"namespace"`
 	Network         GlobalNetwork      `yaml:"network"`
-	Secrets         map[string]string  `yaml:"secrets,omitempty"`
 	SecurityContext SecurityContext    `yaml:"security_context,omitempty"`
 }
 
 type GlobalImage struct {
 	ImagePullSecrets string `yaml:"image_pull_secrets"`
 	Name             string `yaml:"name"`
-	PullSecretBase64 string `yaml:"pull_secret_base64"`
 	Type             string `yaml:"type"`
 	WorkingDir       string `yaml:"working_dir"`
 }
@@ -119,14 +117,21 @@ type ProcessValues struct {
 }
 
 type ProcessVolume struct {
-	Name      string                 `yaml:"name"`
-	MountPath string                 `yaml:"mount_path"`
-	EmptyDir  *ProcessVolumeEmptyDir `yaml:"empty_dir,omitempty"`
+	Name            string                        `yaml:"name"`
+	MountPath       string                        `yaml:"mount_path"`
+	SubPath         string                        `yaml:"sub_path,omitempty"`
+	ReadOnly        bool                          `yaml:"read_only,omitempty"`
+	EmptyDir        *ProcessVolumeEmptyDir        `yaml:"empty_dir,omitempty"`
+	PersistentClaim *ProcessVolumePersistentClaim `yaml:"persistent_claim,omitempty"`
 }
 
 type ProcessVolumeEmptyDir struct {
 	Medium    string `yaml:"medium"`
 	SizeLimit string `yaml:"size_limit"`
+}
+
+type ProcessVolumePersistentClaim struct {
+	ClaimName string `yaml:"claim_name"`
 }
 
 type ProcessAnnotations struct {
@@ -425,7 +430,7 @@ func templateKubernetesJob(input Job) (batchv1.Job, error) {
 	}
 
 	maps.Copy(labels, input.Labels)
-	secretName := fmt.Sprintf("env-%s.%d", input.AppName, input.DeploymentID)
+	secretName := GetConfigSecretName(input.AppName)
 
 	env := []corev1.EnvVar{}
 	for key, value := range input.Env {
