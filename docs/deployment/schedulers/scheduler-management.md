@@ -45,6 +45,26 @@ The default value may be set by passing an empty value for the option.
 dokku scheduler:set --global selected
 ```
 
+### Setting the app shell
+
+The shell used for `dokku run` and `dokku enter` invocations against an app can be customized via the `shell` property. This is useful for images that ship with a non-default shell - for example, alpine-based images that only have `/bin/sh`.
+
+```shell
+dokku scheduler:set node-js-app shell sh
+```
+
+The `shell` property can also be set globally:
+
+```shell
+dokku scheduler:set --global shell sh
+```
+
+The default value (an empty string, which lets the scheduler pick its own default) may be restored by passing an empty value:
+
+```shell
+dokku scheduler:set node-js-app shell
+```
+
 ### Displaying scheduler reports for an app
 
 You can get a report about the app's scheduler status using the `scheduler:report` command:

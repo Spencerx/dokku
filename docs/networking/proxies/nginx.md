@@ -333,8 +333,8 @@ Unsetting this value is the same as enabling custom nginx config usage.
 {{ .APP }}                          Application name
 {{ .APP_SSL_PATH }}                 Path to SSL certificate and key
 {{ .DOKKU_ROOT }}                   Global Dokku root directory (ex: app dir would be `{{ .DOKKU_ROOT }}/{{ .APP }}`)
-{{ .PROXY_PORT }}                   Non-SSL nginx listener port (same as `DOKKU_PROXY_PORT` config var)
-{{ .PROXY_SSL_PORT }}               SSL nginx listener port (same as `DOKKU_PROXY_SSL_PORT` config var)
+{{ .PROXY_PORT }}                   Non-SSL nginx listener port (same as the `proxy-port` property)
+{{ .PROXY_SSL_PORT }}               SSL nginx listener port (same as the `proxy-ssl-port` property)
 {{ .NOSSL_SERVER_NAME }}            List of non-SSL VHOSTS
 {{ .PROXY_PORT_MAP }}               List of port mappings (same as the `map` ports property)
 {{ .PROXY_UPSTREAM_PORTS }}         List of configured upstream ports (derived from the `map` ports property)

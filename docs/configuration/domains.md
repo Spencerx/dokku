@@ -48,7 +48,7 @@ Vhosts can also be disabled for all apps:
 dokku domains:disable --all
 ```
 
-On subsequent deploys, the nginx virtualhost will be discarded. This is useful when deploying internal-facing services that should not be publicly routeable. As of 0.4.0, nginx will still be configured to proxy your app on some random high port. This allows internal services to maintain the same port between deployments. You may change this port by setting `DOKKU_PROXY_PORT` and/or `DOKKU_PROXY_SSL_PORT` (for services configured to use SSL.)
+On subsequent deploys, the nginx virtualhost will be discarded. This is useful when deploying internal-facing services that should not be publicly routeable. As of 0.4.0, nginx will still be configured to proxy your app on some random high port. This allows internal services to maintain the same port between deployments. The non-SSL and SSL ports used can be customized via `dokku proxy:set <app> proxy-port <value>` and `dokku proxy:set <app> proxy-ssl-port <value>` - see the [proxy management documentation](/docs/networking/proxy-management.md#setting-proxy-ports) for details.
 
 To re-enable, run the `domains:enable` subcommand:
 

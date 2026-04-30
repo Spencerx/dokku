@@ -13,6 +13,7 @@ apps:lock <app>                                # Locks an app for deployment
 apps:locked <app>                              # Checks if an app is locked for deployment
 apps:rename <old-app> <new-app>                # Rename an app
 apps:report [<app>] [<flag>]                   # Display report about an app
+apps:set [--global] <app> <key> (<value>)      # Set or clear an apps property for an app
 apps:unlock <app>                              # Unlocks an app for deployment
 ```
 
@@ -77,6 +78,20 @@ Once created, you can configure the application as normal, and deploy the applic
 - Configure domain names and SSL certificates.
 - Create and link datastores.
 - Set environment variables.
+
+### Disabling automatic app creation
+
+By default, pushing to a git remote for an app that does not yet exist on the Dokku host will cause the app to be created automatically. On shared or production hosts this may be undesirable - operators may prefer that an explicit `apps:create` is required first. The `disable-autocreation` global property controls this behavior:
+
+```shell
+dokku apps:set --global disable-autocreation true
+```
+
+While set, pushes targeting an app that does not exist will be rejected. The default behavior may be restored by passing an empty value:
+
+```shell
+dokku apps:set --global disable-autocreation
+```
 
 ### Removing a deployed app
 
