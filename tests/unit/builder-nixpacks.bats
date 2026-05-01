@@ -14,6 +14,24 @@ teardown() {
   destroy_app
 }
 
+@test "(builder-nixpacks:report) --global --builder-nixpacks-global-nixpackstoml-path" {
+  run /bin/bash -c "dokku builder-nixpacks:set --global nixpackstoml-path nixpacks.alt.toml"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku builder-nixpacks:report --global --builder-nixpacks-global-nixpackstoml-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "nixpacks.alt.toml"
+
+  run /bin/bash -c "dokku builder-nixpacks:set --global nixpackstoml-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(builder-nixpacks:set)" {
   run /bin/bash -c "dokku config:set $TEST_APP SECRET_KEY=fjdkslafjdk"
   echo "output: $output"

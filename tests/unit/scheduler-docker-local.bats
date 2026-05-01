@@ -10,6 +10,14 @@ teardown() {
   global_teardown
 }
 
+@test "(scheduler-docker-local:report) --global --scheduler-docker-local-init-process" {
+  run /bin/bash -c "dokku scheduler-docker-local:report --global --scheduler-docker-local-init-process"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "true"
+}
+
 @test "(scheduler-docker-local) scheduler-docker-local:help" {
   run /bin/bash -c "dokku scheduler-docker-local"
   echo "output: $output"

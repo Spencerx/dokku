@@ -79,6 +79,22 @@ teardown() {
   echo "status: $status"
   assert_success
   assert_output_contains "global nginx information"
+
+  run /bin/bash -c "dokku nginx:set --global client-max-body-size 5m"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku nginx:report --global --nginx-global-client-max-body-size"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "5m"
+
+  run /bin/bash -c "dokku nginx:set --global client-max-body-size"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
 }
 
 @test "(nginx-vhosts) proxy:build-config (domains:disable/enable)" {

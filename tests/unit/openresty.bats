@@ -18,6 +18,24 @@ teardown() {
   dokku nginx:start
 }
 
+@test "(openresty:report) --global --openresty-global-hsts" {
+  run /bin/bash -c "dokku openresty:set --global hsts false"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku openresty:report --global --openresty-global-hsts"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "false"
+
+  run /bin/bash -c "dokku openresty:set --global hsts"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(openresty) openresty:help" {
   run /bin/bash -c "dokku openresty"
   echo "output: $output"

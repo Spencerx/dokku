@@ -18,6 +18,24 @@ teardown() {
   dokku nginx:start
 }
 
+@test "(caddy:report) --global --caddy-log-level" {
+  run /bin/bash -c "dokku caddy:set --global log-level DEBUG"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku caddy:report --global --caddy-log-level"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "DEBUG"
+
+  run /bin/bash -c "dokku caddy:set --global log-level"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(caddy) caddy:help" {
   run /bin/bash -c "dokku caddy"
   echo "output: $output"

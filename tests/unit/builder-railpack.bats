@@ -25,6 +25,24 @@ teardown() {
   global_teardown
 }
 
+@test "(builder-railpack:report) --global --builder-railpack-global-railpackjson-path" {
+  run /bin/bash -c "dokku builder-railpack:set --global railpackjson-path railpack.alt.json"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku builder-railpack:report --global --builder-railpack-global-railpackjson-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "railpack.alt.json"
+
+  run /bin/bash -c "dokku builder-railpack:set --global railpackjson-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(builder-railpack:set)" {
   run /bin/bash -c "dokku config:set $TEST_APP SECRET_KEY=fjdkslafjdk"
   echo "output: $output"

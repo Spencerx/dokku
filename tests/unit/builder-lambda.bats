@@ -10,6 +10,24 @@ teardown() {
   destroy_app
 }
 
+@test "(builder-lambda:report) --global --builder-lambda-global-lambdayml-path" {
+  run /bin/bash -c "dokku builder-lambda:set --global lambdayml-path lambda.alt.yml"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku builder-lambda:report --global --builder-lambda-global-lambdayml-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "lambda.alt.yml"
+
+  run /bin/bash -c "dokku builder-lambda:set --global lambdayml-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(builder-lambda:set)" {
   run /bin/bash -c "dokku config:set $TEST_APP SECRET_KEY=fjdkslafjdk"
   echo "output: $output"

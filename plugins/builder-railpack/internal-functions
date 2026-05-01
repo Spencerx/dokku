@@ -12,11 +12,13 @@ cmd-builder-railpack-report() {
   set -- "${REPORT_ARGS[@]}"
   declare APP="${1:-}" INFO_FLAG="${2:-}"
 
-  if [[ "$REPORT_IS_GLOBAL" == "true" ]]; then
-    APP="--global"
-  elif [[ -n "$APP" ]] && [[ "$APP" == --* ]]; then
+  if [[ -n "$APP" ]] && [[ "$APP" == --* ]]; then
     INFO_FLAG="$APP"
     APP=""
+  fi
+
+  if [[ "$REPORT_IS_GLOBAL" == "true" ]]; then
+    APP="--global"
   fi
 
   if [[ -z "$APP" ]] && [[ -z "$INFO_FLAG" ]]; then
