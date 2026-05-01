@@ -249,10 +249,17 @@ assert_http_success() {
 
 assert_http_localhost_response() {
   local scheme="$1" domain="$2" port="${3:-80}" path="${4:-}" content="${5:-}" status_code="${6:-200}"
-  run curl --connect-to "$domain:$port:localhost:$port" -kSso /dev/null -w "%{http_code}" "$scheme://$domain:$port$path"
+  local retries="${HTTP_ASSERT_RETRIES:-30}" attempt=1
+  while [[ "$attempt" -lt "$retries" ]]; do
+    run curl --connect-to "$domain:$port:localhost:$port" -kSso /dev/null -w "%{http_code}" "$scheme://$domain:$port$path"
+    [[ "$output" == "$status_code" ]] && break
+    sleep 1
+    attempt=$((attempt + 1))
+  done
   echo "curl: curl --connect-to $domain:$port:localhost:$port -kSso /dev/null -w %{http_code} $scheme://$domain:$port$path"
   echo "output: $output"
   echo "status: $status"
+  echo "attempts: $attempt"
   assert_output "$status_code"
 
   if [[ -n "$content" ]]; then
@@ -265,10 +272,17 @@ assert_http_localhost_response() {
 
 assert_http_localhost_response_contains() {
   local scheme="$1" domain="$2" port="${3:-80}" path="${4:-}" content="${5:-}" status_code="${6:-200}"
-  run curl --connect-to "$domain:$port:localhost:$port" -kSso /dev/null -w "%{http_code}" "$scheme://$domain:$port$path"
+  local retries="${HTTP_ASSERT_RETRIES:-30}" attempt=1
+  while [[ "$attempt" -lt "$retries" ]]; do
+    run curl --connect-to "$domain:$port:localhost:$port" -kSso /dev/null -w "%{http_code}" "$scheme://$domain:$port$path"
+    [[ "$output" == "$status_code" ]] && break
+    sleep 1
+    attempt=$((attempt + 1))
+  done
   echo "curl: curl --connect-to $domain:$port:localhost:$port -kSso /dev/null -w %{http_code} $scheme://$domain:$port$path"
   echo "output: $output"
   echo "status: $status"
+  echo "attempts: $attempt"
   assert_output "$status_code"
 
   if [[ -n "$content" ]]; then

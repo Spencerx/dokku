@@ -18,6 +18,14 @@ teardown() {
   dokku nginx:start
 }
 
+@test "(openresty:report) --global --openresty-letsencrypt-server" {
+  run /bin/bash -c "dokku openresty:report --global --openresty-letsencrypt-server"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "https://acme-staging-v02.api.letsencrypt.org/directory"
+}
+
 @test "(openresty) openresty:help" {
   run /bin/bash -c "dokku openresty"
   echo "output: $output"

@@ -10,6 +10,24 @@ teardown() {
   destroy_app
 }
 
+@test "(builder-herokuish:report) --global --builder-herokuish-global-allowed" {
+  run /bin/bash -c "dokku builder-herokuish:set --global allowed false"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku builder-herokuish:report --global --builder-herokuish-global-allowed"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "false"
+
+  run /bin/bash -c "dokku builder-herokuish:set --global allowed"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(builder-herouish:build .env)" {
   run deploy_app python dokku@$DOKKU_DOMAIN:$TEST_APP
   echo "output: $output"

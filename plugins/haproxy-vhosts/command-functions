@@ -37,11 +37,13 @@ cmd-haproxy-report() {
   set -- "${REPORT_ARGS[@]}"
   declare APP="${1:-}" INFO_FLAG="${2:-}"
 
-  if [[ "$REPORT_IS_GLOBAL" == "true" ]]; then
-    APP="--global"
-  elif [[ -n "$APP" ]] && [[ "$APP" == --* ]]; then
+  if [[ -n "$APP" ]] && [[ "$APP" == --* ]]; then
     INFO_FLAG="$APP"
     APP=""
+  fi
+
+  if [[ "$REPORT_IS_GLOBAL" == "true" ]]; then
+    APP="--global"
   fi
 
   if [[ -z "$APP" ]] && [[ -z "$INFO_FLAG" ]]; then
@@ -72,6 +74,7 @@ cmd-haproxy-report-single() {
     "--haproxy-letsencrypt-email: $(fn-haproxy-letsencrypt-email)"
     "--haproxy-letsencrypt-server: $(fn-haproxy-letsencrypt-server)"
     "--haproxy-log-level: $(fn-haproxy-log-level)"
+    "--haproxy-refresh-conf: $(fn-haproxy-refresh-conf)"
   )
 
   fn-report-validate-format "$FORMAT" "$INFO_FLAG"

@@ -35,6 +35,12 @@ teardown() {
   echo "status: $status"
   assert_success
   assert_output_contains "global builder-dockerfile information"
+
+  run /bin/bash -c "dokku builder-dockerfile:report --global --builder-dockerfile-global-dockerfile-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "Dockerfile"
 }
 
 @test "(builder-dockerfile:set)" {

@@ -23,6 +23,24 @@ teardown() {
   dokku nginx:start
 }
 
+@test "(traefik:report) --global --traefik-log-level" {
+  run /bin/bash -c "dokku traefik:set --global log-level DEBUG"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku traefik:report --global --traefik-log-level"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "DEBUG"
+
+  run /bin/bash -c "dokku traefik:set --global log-level"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(traefik) traefik:help" {
   run /bin/bash -c "dokku traefik"
   echo "output: $output"

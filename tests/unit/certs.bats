@@ -53,6 +53,12 @@ teardown() {
   echo "status: $status"
   assert_success
   assert_output_contains "global ssl information"
+
+  run /bin/bash -c "dokku certs:report --global --ssl-bogus"
+  echo "output: $output"
+  echo "status: $status"
+  assert_failure
+  assert_output_contains "Invalid flag passed"
 }
 
 @test "(certs) certs:add" {

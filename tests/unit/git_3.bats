@@ -858,4 +858,10 @@ teardown() {
   echo "status: $status"
   assert_success
   assert_output "false"
+
+  run /bin/bash -c "dokku git:report --global --git-global-deploy-branch"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "master"
 }

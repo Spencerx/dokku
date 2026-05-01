@@ -16,6 +16,24 @@ teardown() {
   global_teardown
 }
 
+@test "(builder-pack:report) --global --builder-pack-global-projecttoml-path" {
+  run /bin/bash -c "dokku builder-pack:set --global projecttoml-path project.alt.toml"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+
+  run /bin/bash -c "dokku builder-pack:report --global --builder-pack-global-projecttoml-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "project.alt.toml"
+
+  run /bin/bash -c "dokku builder-pack:set --global projecttoml-path"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+}
+
 @test "(builder-pack:set)" {
   run /bin/bash -c "dokku config:set $TEST_APP SECRET_KEY=fjdkslafjdk"
   echo "output: $output"

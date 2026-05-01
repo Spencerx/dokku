@@ -45,6 +45,12 @@ teardown() {
   echo "status: $status"
   assert_success
   assert_output_contains "Global domains information"
+
+  run /bin/bash -c "dokku domains:report --global --domains-global-enabled"
+  echo "output: $output"
+  echo "status: $status"
+  assert_success
+  assert_output "true"
 }
 
 @test "(domains) domains" {
