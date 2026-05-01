@@ -93,7 +93,7 @@ jobs:
 
       - name: Open pull request
         if: steps.latest.outputs.outdated == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
           branch: chore/bump-${{ matrix.name }}-${{ steps.latest.outputs.latest }}
