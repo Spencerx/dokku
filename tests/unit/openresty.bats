@@ -18,22 +18,12 @@ teardown() {
   dokku nginx:start
 }
 
-@test "(openresty:report) --global --openresty-global-hsts" {
-  run /bin/bash -c "dokku openresty:set --global hsts false"
+@test "(openresty:report) --global --openresty-letsencrypt-server" {
+  run /bin/bash -c "dokku openresty:report --global --openresty-letsencrypt-server"
   echo "output: $output"
   echo "status: $status"
   assert_success
-
-  run /bin/bash -c "dokku openresty:report --global --openresty-global-hsts"
-  echo "output: $output"
-  echo "status: $status"
-  assert_success
-  assert_output "false"
-
-  run /bin/bash -c "dokku openresty:set --global hsts"
-  echo "output: $output"
-  echo "status: $status"
-  assert_success
+  assert_output "https://acme-staging-v02.api.letsencrypt.org/directory"
 }
 
 @test "(openresty) openresty:help" {
