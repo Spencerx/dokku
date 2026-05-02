@@ -148,8 +148,11 @@ func SaveEntry(entry *Entry) error {
 		return fmt.Errorf("unable to encode storage entry %q: %w", entry.Name, err)
 	}
 
-	path := entryPath(entry.Name)
-	if err := os.WriteFile(path, data, 0600); err != nil {
+	if err := common.WriteBytesToFile(common.WriteBytesToFileInput{
+		Bytes:    data,
+		Filename: entryPath(entry.Name),
+		Mode:     0600,
+	}); err != nil {
 		return fmt.Errorf("unable to write storage entry %q: %w", entry.Name, err)
 	}
 	return nil

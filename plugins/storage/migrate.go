@@ -168,11 +168,7 @@ func migrateMount(appName string, mount string, phases []string) error {
 }
 
 func touchMigrationFlag(appName string) error {
-	f, err := os.Create(migrationFlagFile(appName))
-	if err != nil {
-		return err
-	}
-	return f.Close()
+	return common.TouchFile(migrationFlagFile(appName))
 }
 
 func filterMountLines(lines []string) []string {

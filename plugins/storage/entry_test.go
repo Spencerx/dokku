@@ -1,17 +1,36 @@
 package storage
 
 import (
+	"os"
+	"os/user"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"syscall"
 	"testing"
 
 	. "github.com/onsi/gomega"
 )
 
+// withTempLibRoot points DOKKU_LIB_ROOT at a temp dir and overrides the
+// permission helpers' target user/group to the current process user so
+// SetPermissions is a no-op chown rather than a hard failure on dev and
+// CI machines that lack a dokku system user.
 func withTempLibRoot(t *testing.T) string {
 	t.Helper()
 	dir := t.TempDir()
 	t.Setenv("DOKKU_LIB_ROOT", dir)
+
+	current, err := user.Current()
+	if err != nil {
+		t.Fatalf("user.Current: %v", err)
+	}
+	group, err := user.LookupGroupId(current.Gid)
+	if err != nil {
+		t.Fatalf("user.LookupGroupId: %v", err)
+	}
+	t.Setenv("DOKKU_SYSTEM_USER", current.Username)
+	t.Setenv("DOKKU_SYSTEM_GROUP", group.Name)
 	return dir
 }
 
@@ -202,4 +221,27 @@ func TestLegacyMountToEntry(t *testing.T) {
 	Expect(abs.Scheduler).To(Equal(SchedulerDockerLocal))
 	Expect(abs.HostPath).To(Equal("/host/path"))
 	Expect(abs.Validate()).To(Succeed())
+}
+
+// TestSaveEntryChownsToSystemUser is a regression test for #8557: the
+// install trigger runs as root, so SaveEntry must chown the file to the
+// dokku user before ps:rebuild can read it.
+func TestSaveEntryChownsToSystemUser(t *testing.T) {
+	RegisterTestingT(t)
+	withTempLibRoot(t)
+
+	Expect(SaveEntry(&Entry{
+		Name:      "demo-data",
+		Scheduler: SchedulerDockerLocal,
+		HostPath:  "/data/demo",
+	})).To(Succeed())
+
+	info, err := os.Stat(entryPath("demo-data"))
+	Expect(err).NotTo(HaveOccurred())
+	stat, ok := info.Sys().(*syscall.Stat_t)
+	Expect(ok).To(BeTrue())
+
+	current, err := user.Current()
+	Expect(err).NotTo(HaveOccurred())
+	Expect(strconv.Itoa(int(stat.Uid))).To(Equal(current.Uid))
 }

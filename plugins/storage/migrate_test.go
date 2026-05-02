@@ -5,35 +5,25 @@ import (
 	"os/user"
 	"path/filepath"
 	"sort"
+	"strconv"
+	"syscall"
 	"testing"
 
 	"github.com/dokku/dokku/plugins/common"
 	dockeroptions "github.com/dokku/dokku/plugins/docker-options"
 )
 
-// setupMigrationEnv points DOKKU_LIB_ROOT and DOKKU_ROOT at temp dirs and
-// tells the permission helpers to chown to the current user (a no-op),
-// so the test works without root and without the dokku system user.
-// Mirrors the helper in docker-options/migration_test.go.
+// setupMigrationEnv reuses withTempLibRoot for DOKKU_LIB_ROOT plus the
+// permission-helper user/group overrides, then layers DOKKU_ROOT and
+// PLUGIN_PATH on top so DokkuApps can find the staged apps. Mirrors the
+// docker-options migration test fixture.
 func setupMigrationEnv(t *testing.T) (libRoot string, dokkuRoot string) {
 	t.Helper()
-	libRoot = t.TempDir()
+	libRoot = withTempLibRoot(t)
 	dokkuRoot = t.TempDir()
 
-	t.Setenv("DOKKU_LIB_ROOT", libRoot)
 	t.Setenv("DOKKU_ROOT", dokkuRoot)
 	t.Setenv("PLUGIN_PATH", filepath.Join(libRoot, "plugins"))
-
-	current, err := user.Current()
-	if err != nil {
-		t.Fatalf("user.Current: %v", err)
-	}
-	group, err := user.LookupGroupId(current.Gid)
-	if err != nil {
-		t.Fatalf("user.LookupGroupId: %v", err)
-	}
-	t.Setenv("DOKKU_SYSTEM_USER", current.Username)
-	t.Setenv("DOKKU_SYSTEM_GROUP", group.Name)
 
 	// MigrateLegacyMounts creates the flag dir before iterating apps;
 	// migrateApp (the per-app helper) assumes it already exists. Pre-
@@ -297,6 +287,40 @@ func TestMigrateAppRefusesEntryNameCollision(t *testing.T) {
 	// Drain did not happen.
 	if got := phaseOptions(t, "alpha", "deploy"); len(got) != 1 || got[0] != "-v /var/log:/log" {
 		t.Errorf("expected legacy line preserved on collision, got %v", got)
+	}
+}
+
+// TestMigrateAppChownsLegacyEntryFiles is the regression for #8557:
+// migrating from the install trigger (which runs as root) must produce
+// dokku-owned legacy-*.json files. setupMigrationEnv overrides the
+// system user/group to the current process user, so we assert against
+// that uid rather than the literal dokku one.
+func TestMigrateAppChownsLegacyEntryFiles(t *testing.T) {
+	_, dokkuRoot := setupMigrationEnv(t)
+	stageApp(t, dokkuRoot, "alpha", map[string][]string{
+		"deploy": {"-v /var/log:/log"},
+	})
+
+	if err := migrateApp("alpha"); err != nil {
+		t.Fatalf("migrateApp: %v", err)
+	}
+
+	entry := LegacyMountToEntry("/var/log:/log")
+	info, err := os.Stat(entryPath(entry.Name))
+	if err != nil {
+		t.Fatalf("stat entry: %v", err)
+	}
+	stat, ok := info.Sys().(*syscall.Stat_t)
+	if !ok {
+		t.Fatalf("stat.Sys is not *syscall.Stat_t")
+	}
+
+	current, err := user.Current()
+	if err != nil {
+		t.Fatalf("user.Current: %v", err)
+	}
+	if got := strconv.Itoa(int(stat.Uid)); got != current.Uid {
+		t.Errorf("entry file uid = %s, want %s", got, current.Uid)
 	}
 }
 

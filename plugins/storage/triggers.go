@@ -50,6 +50,10 @@ func TriggerInstall() error {
 		}
 	}
 
+	if err := repairRegistryOwnership(); err != nil {
+		return fmt.Errorf("Unable to repair storage registry ownership: %s", err.Error())
+	}
+
 	if err := MigrateLegacyMounts(); err != nil {
 		return fmt.Errorf("storage migration failed: %w", err)
 	}
@@ -71,6 +75,32 @@ func TriggerInstall() error {
 	}
 
 	return nil
+}
+
+// repairRegistryOwnership rewrites ownership on every regular file under
+// the registry tree so the dokku user can read entry / migration-flag
+// files. Earlier 0.38 builds wrote those files as root because SaveEntry
+// and touchMigrationFlag bypassed the permission helpers; on an upgrade
+// the per-app migration flag short-circuits MigrateLegacyMounts so a
+// plain SaveEntry fix would leave the broken files in place. The walk is
+// idempotent: calling SetPermissions on a file already owned by the
+// target user produces a no-op chown.
+func repairRegistryOwnership() error {
+	return filepath.Walk(RegistryDirectory(), func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			if os.IsNotExist(err) {
+				return nil
+			}
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		return common.SetPermissions(common.SetPermissionInput{
+			Filename: path,
+			Mode:     info.Mode().Perm(),
+		})
+	})
 }
 
 // TriggerPostDelete removes the attachment store for an app that's being
