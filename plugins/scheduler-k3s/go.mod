@@ -3,7 +3,7 @@ module github.com/dokku/dokku/plugins/scheduler-k3s
 go 1.26.2
 
 require (
-	github.com/Masterminds/semver/v3 v3.4.0
+	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/cert-manager/cert-manager v1.20.2
 	github.com/dokku/dokku/plugins/app-json v0.0.0-00010101000000-000000000000
 	github.com/dokku/dokku/plugins/common v0.0.0-00010101000000-000000000000
