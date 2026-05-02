@@ -15,6 +15,7 @@ RUN addgroup --gid $DOKKU_GID dokku \
 
 COPY ./tests/dhparam.pem /tmp/dhparam.pem
 COPY ./build/package/ /tmp
+COPY ./contrib/dependencies.json /tmp/dependencies.json
 
 ENV DOKKU_INIT_SYSTEM=sv
 
@@ -22,12 +23,15 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # hadolint ignore=DL3005,DL3008
 RUN mkdir -p /etc/apt/keyrings \
   && mkdir -p /etc/apt/keyrings \
-  && apt-get remove -y systemd && apt-get autoremove -y && apt-get update && apt-get -y --no-install-recommends install gpg lsb-release openssl openssh-server rsync software-properties-common \
+  && apt-get remove -y systemd && apt-get autoremove -y && apt-get update && apt-get -y --no-install-recommends install gpg jq lsb-release openssl openssh-server rsync software-properties-common \
   && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
   && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
-  && add-apt-repository ppa:cncf-buildpacks/pack-cli \
   && apt-get update \
-  && apt-get -y --no-install-recommends install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin pack-cli \
+  && apt-get -y --no-install-recommends install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
+  && PACK_URL="$(jq -r --arg arch "$(dpkg --print-architecture)" '.dependencies[] | select(.name == "pack") | .urls[$arch]' /tmp/dependencies.json)" \
+  && curl -fsSL "$PACK_URL" | tar -C /usr/bin/ --no-same-owner -xzf - pack \
+  && chmod +x /usr/bin/pack \
+  && test -x /usr/bin/pack \
   && curl -o /tmp/nixpacks.bash -sSL https://nixpacks.com/install.sh \
   && chmod +x /tmp/nixpacks.bash \
   && NIXPACKS_BIN_DIR=/usr/bin BIN_DIR=/usr/bin /tmp/nixpacks.bash \

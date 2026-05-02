@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import re
 
 
 def main():
@@ -18,11 +19,9 @@ def main():
         for dependency in deps[key]:
             name = dependency["name"]
             version = dependency["version"]
+            pattern = re.compile(rf"(?<![\w-]){re.escape(name)}(?![\w-])")
             for i, line in enumerate(control_lines):
-                if name in line:
-                    control_lines[i] = control_lines[i].replace(
-                        name, f"{name} (>= {version})"
-                    )
+                control_lines[i] = pattern.sub(f"{name} (>= {version})", line)
 
     with open("debian/control", mode="w", encoding="utf-8") as handle:
         handle.writelines(control_lines)
