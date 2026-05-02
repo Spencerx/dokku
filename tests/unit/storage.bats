@@ -359,6 +359,15 @@ teardown() {
   echo "status: $status"
   assert_success
 
+  # Regression for #8557: the legacy-*.json file must be readable by the
+  # dokku user. The migration runs as root via the install trigger, so
+  # without an explicit chown the file lands as root:root and ps:rebuild
+  # fails with permission denied.
+  legacy_entry_name=$(dokku storage:list-entries --format json | jq -r '.[] | select(.name | startswith("legacy-")) | .name' | head -1)
+  run /bin/bash -c "stat -c '%U:%G' /var/lib/dokku/data/storage-registry/entries/${legacy_entry_name}.json"
+  assert_success
+  assert_output "dokku:dokku"
+
   # docker-options no longer holds the -v line on either phase.
   run /bin/bash -c "dokku docker-options:report $TEST_APP --docker-options-deploy"
   assert_success
