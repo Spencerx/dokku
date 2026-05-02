@@ -655,9 +655,11 @@ convert_to_dockerfile() {
 
 install_pack() {
   if [[ ! -x /usr/bin/pack ]]; then
-    add-apt-repository --yes ppa:cncf-buildpacks/pack-cli
-    apt-get update
-    apt-get --yes install pack-cli
+    local DEPS_FILE="${BATS_TEST_DIRNAME}/../../contrib/dependencies.json"
+    local PACK_URL
+    PACK_URL="$(jq -r --arg arch "$(dpkg --print-architecture)" '.dependencies[] | select(.name == "pack") | .urls[$arch]' "$DEPS_FILE")"
+    curl -fsSL "$PACK_URL" | tar -C /usr/bin --no-same-owner -xzf - pack
+    chmod +x /usr/bin/pack
   fi
 }
 
